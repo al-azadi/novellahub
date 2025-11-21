@@ -1,63 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Three.js Model Viewer</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NovellaHub — Authors & Readers</title>
 
-  <!-- Three.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- React + ReactDOM (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
-  <!-- Orbit Controls -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Babel (for JSX in browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- GLTF Loader -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- i18next + react-i18next (UMD builds) -->
+  <script src="https://unpkg.com/i18next@23.7.11/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/react-i18next@13.3.2/dist/umd/react-i18next.min.js"></script>
+
+  <meta name="description" content="NovellaHub: Publish novels, poems & songs and discuss in rooms" />
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
+    :root{
+      --accent:#0ea5a4;
+      --page-bg:#f8fafc;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --radius:12px;
     }
-    canvas {
-      display: block;
+    *{box-sizing:border-box}
+    html,body,#root{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--page-bg);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-
-    .ui {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px 15px;
-      border-radius: 8px;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-
-    button {
-      padding: 8px 14px;
-      border: none;
-      background: #00b7ff;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-      margin-top: 5px;
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px;
     }
 
-    button:hover {
-      background: #0096d1;
+    /* header */
+    header.site{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+      border-radius:var(--radius);
+      margin-bottom:14px;
+      position:sticky;
+      top:12px;
+      z-index:10;
+      backdrop-filter:blur(6px);
     }
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:44px;width:44px;border-radius:8px;object-fit:cover}
+    .brand h1{font-size:18px;margin:0}
+    .actions{display:flex;gap:8px;align-items:center}
+
+    /* layout */
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+    @media(min-width:900px){
+      .grid{grid-template-columns:2fr 1fr}
+    }
+
+    /* card */
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 6px 18px rgba(12, 17, 23, 0.06);
+    }
+
+    /* editor */
+    .editor .title{width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #e6edf0}
+    .editor textarea{width:100%;min-height:160px;padding:12px;border-radius:8px;border:1px solid #e6edf0;resize:vertical}
+    .btn{background:var(--accent);color:#fff;border:none;padding:9px 14px;border-radius:10px;cursor:pointer}
+    .btn.ghost{background:transparent;color:#111;border:1px solid #e6edf0}
+
+    /* posts */
+    .post{padding:10px;border-radius:10px;border:1px solid #f0f4f5;margin-bottom:10px}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* rooms */
+    .rooms-list{display:flex;flex-direction:column;gap:8px}
+    .room-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #f0f4f5;cursor:pointer}
+    .chat-window{display:flex;flex-direction:column;gap:8px}
+    .messages{max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid #eef2f3;background:#fbfdfe}
+
+    /* profile/theme */
+    .theme-row{display:flex;gap:8px;align-items:center}
+    input[type=color]{height:36px;width:56px;border:0;padding:0;background:none;cursor:pointer}
+
+    /* responsive footer */
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* small helpers */
+    .small{font-size:13px;color:var(--muted)}
+    .flex{display:flex;gap:8px;align-items:center}
+    .spacer{flex:1}
   </style>
 </head>
-
 <body>
+  <div id="root"></div>
 
-  <div class="ui">
-    <h3>Model Controls</h3>
-    <button onclick="playAnimation()">Play Animation</button><br />
-    <button onclick="stopAnimation()">Stop Animation</button>
-  </div>
-
-  <script src="app.js"></script>
+  <!-- App code -->
+  <script type="text/babel" src="app.js"></script>
 </body>
 </html>
