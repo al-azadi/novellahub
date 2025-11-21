@@ -2,19 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NovellaHub</title>
-  <div id="root"></div>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js Model Viewer</title>
 
-  <!-- React & ReactDOM CDN -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Orbit Controls -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- GLTF Loader -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+
+    .ui {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 15px;
+      border-radius: 8px;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      background: #00b7ff;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    button:hover {
+      background: #0096d1;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="root"></div>
-  <script type="text/babel" src="app.jsx"></script>
+
+  <div class="ui">
+    <h3>Model Controls</h3>
+    <button onclick="playAnimation()">Play Animation</button><br />
+    <button onclick="stopAnimation()">Stop Animation</button>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
