@@ -507,4 +507,9 @@ function AppRoot(){
 
       { profileOpen && user && <div style={{position:'fixed',right:12,bottom:12}}><ProfilePanel user={user} setUser={setUser} /></div> }
 
-      <footer className="small card
+      <footer className="small card style={{marginTop:18,textAlign:'center'}}>
+        Built for creators — responsive, local-first, privacy-friendly.
+      </footer>
+    </div>
+  );
+}
